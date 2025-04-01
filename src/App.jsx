@@ -14,12 +14,16 @@ function App() {
       })
     }, []);
 
-  const filteredUsers = users
+  console.log(sortRule);
+
+  let filteredUsers = users
     .filter((user) => 
       user.name.toLowerCase().includes(searchValue.toLowerCase()) || 
-      user.email.toLowerCase().includes(searchValue.toLowerCase()))
-    .sort((prev, cur) => {
-      if (prev[sortRule.item].toLowerCase() < cur[sortRule.item].toLowerCase()) return sortRule.direction ? -1 : 1;
+      user.email.toLowerCase().includes(searchValue.toLowerCase()));
+  filteredUsers.sort((prev, cur) => {
+      if (prev[sortRule.item].toLowerCase() < cur[sortRule.item].toLowerCase()) return sortRule.direction === "asc" ? -1 : 1;
+      if (prev[sortRule.item].toLowerCase() > cur[sortRule.item].toLowerCase()) return sortRule.direction === "asc" ? 1 : -1;
+      return 0;
     });
 
   return (
@@ -31,11 +35,17 @@ function App() {
         onChange={e => setSearchValue(e.target.value)}
       />
 
-      <select className="sort">
-        <option className="name-asc">Name ⬆</option>
-        <option className="name-des">Name ⬇</option>
-        <option className="email-asc">Email ⬆</option>
-        <option className="email-des">Email ⬇</option>
+      <select className="sort" 
+        value={`${sortRule.item}-${sortRule.direction}`} 
+        onChange={(e) => {
+          const [item, direction] = e.target.value.split('-');
+          setSortRule({item, direction});
+        }}
+      >
+        <option value="name-asc">Name ⬆</option>
+        <option value="name-des">Name ⬇</option>
+        <option value="email-asc">Email ⬆</option>
+        <option value="email-des">Email ⬇</option>
       </select>
 
       {filteredUsers.map((user) => (
