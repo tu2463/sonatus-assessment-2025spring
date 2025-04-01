@@ -5,16 +5,28 @@ function App() {
   const [users, setUsers] = useState([]);
   const [searchValue, setSearchValue] = useState('');
   const [sortRule, setSortRule] = useState({item: 'name', direction: 'asc'});
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   
   useEffect(() => {
+    setIsLoading(true);
     fetch("https://jsonplaceholder.typicode.com/users")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw Error(`Error fetching data: ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
         setUsers(data);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        setErrorMessage(err.message);
+        setIsLoading(false);
       })
     }, []);
 
-  console.log(sortRule);
+  if (errorMessage) return <div className="error">{errorMessage}</div>;
+  if (isLoading) return <div>Fetching data...</div>;
 
   let filteredUsers = users
     .filter((user) => 
@@ -43,9 +55,9 @@ function App() {
         }}
       >
         <option value="name-asc">Name ⬆</option>
-        <option value="name-des">Name ⬇</option>
+        <option value="name-desc">Name ⬇</option>
         <option value="email-asc">Email ⬆</option>
-        <option value="email-des">Email ⬇</option>
+        <option value="email-desc">Email ⬇</option>
       </select>
 
       {filteredUsers.map((user) => (
