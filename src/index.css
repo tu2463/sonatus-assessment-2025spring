@@ -78,6 +78,10 @@ button:focus-visible {
   width: 100%;
 }
 
+.user .name:hover {
+  text-decoration: underline;
+}
+
 .sort {
   margin: 1rem 0rem;
   padding: 0.5rem;
